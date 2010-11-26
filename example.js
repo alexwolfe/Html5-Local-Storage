@@ -1,7 +1,6 @@
 document.addEvent('domready', function(){
     var iStore = new iStorage(); 
     
-    
     function storeValues() {
         //STORE KEYS WITH DIFFERENT DATA TYPES
         iStore.set('mynum', 125); 

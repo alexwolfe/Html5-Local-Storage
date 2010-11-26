@@ -19,6 +19,10 @@
 //NATIVE EVENTS
 //'storage' (for all modern browsers)
 //window.event (for ie)
+//e.key 
+//e.oldValue
+//e.newValue
+//e.url
 //
 //NATIVE STORAGE SIZE
 //5mb
@@ -34,7 +38,7 @@ var iStorage = new Class({
 	initialize: function(options) {
 	   this.setOptions(options); 
 		if(this.supportsStorage) {
-		  
+		 // this.setUpdateEvent(); 
 		} else {
 		  return false;
 		}
@@ -61,14 +65,39 @@ var iStorage = new Class({
 	   }
 	}, 
 	
+	getType: function(item) {
+	   switch(item.constructor) {
+	       case Array: return 'array'; break;
+	       case String: return 'string'; break;
+	       case Number: return 'number'; break;
+	       case Object: return 'object'; break;
+	       case Boolean: return 'boolean'; break;
+	       default: return false;
+	   }
+	}, 
+	
 	remove: function(key) {
 	   localStorage.removeItem(this.options.prefix + key); 
 	}, 
 	
 	set: function(key, value) {
-        var data = JSON.encode({type: value.constructor,data: value}); 	   
+	    var type = this.getType(value); 
+        var data = JSON.encode({'type': type,'data': value}); 	   
         localStorage.setItem(this.options.prefix + key, data); 
+        return key + ' has been set'; 
         this.fireEvent('set_item');
+	}, 
+	
+	setUpdateEvent: function() {
+	   if(window.addEventListener){
+    	    window.addEventListener('storage', function(e){
+    	     //  alert(e.key);
+    	   }, false);
+	   } else {
+	      window.attachEvent('storage', function(e){
+	       //alert(e.key);
+	      }) 
+	   }
 	}, 
 	
 	supportsStorage: function() {
